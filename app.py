@@ -108,6 +108,7 @@ def _session() -> requests.Session:
             "X-IG-App-ID": IG_APP_ID,
             "Accept": "*/*",
             "Accept-Language": "en-US,en;q=0.9",
+            "Referer": "https://www.instagram.com/",
         }
     )
     return s
@@ -116,7 +117,7 @@ def _session() -> requests.Session:
 def fetch_profile(username: str) -> dict:
     """Fetch profile info + first batch of timeline media via Instagram's
     public web_profile_info endpoint (no login required)."""
-    url = "https://i.instagram.com/api/v1/users/web_profile_info/"
+    url = "https://www.instagram.com/api/v1/users/web_profile_info/"
     s = _session()
     resp = s.get(url, params={"username": username}, timeout=20)
 
