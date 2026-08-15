@@ -119,7 +119,15 @@ def fetch_profile(username: str) -> dict:
     public web_profile_info endpoint (no login required)."""
     url = "https://www.instagram.com/api/v1/users/web_profile_info/"
     s = _session()
-    resp = s.get(url, params={"username": username}, timeout=20)
+
+    resp = None
+    for attempt in range(3):
+        resp = s.get(url, params={"username": username}, timeout=20)
+        if resp.status_code != 429:
+            break
+        wait = 2 * (attempt + 1)
+        log.info(f"Instagram 429'd (attempt {attempt + 1}/3), backing off {wait}s")
+        time.sleep(wait)
 
     if resp.status_code == 404:
         raise HTTPException(status_code=404, detail="Instagram profile not found.")
